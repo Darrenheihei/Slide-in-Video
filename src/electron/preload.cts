@@ -1,18 +1,28 @@
 const electron = require('electron');
+const path = require('path');
 
 electron.contextBridge.exposeInMainWorld('electron', {
-    subscribeStatistics: (callback) =>
-        ipcOn("statistics", (stats) => {
-            callback(stats);
+    getPathForFile: (file) => electron.webUtils.getPathForFile(file),
+    sendProcessSignal: (filePath) => {
+        ipcSend("processSignal", filePath);
+    },
+    subscribeProgress: (callback) =>
+        ipcOn("progress", (progress) => {
+            callback(progress);
         }),
-    getStaticData: () => ipcInvoke("getStaticData"),
 } satisfies Window['electron']);
+
+electron.contextBridge.exposeInMainWorld('path', {
+    basename: (filePath: string) => path.basename(filePath),
+} satisfies Window['path']);
 
 function ipcInvoke<Key extends keyof EventPayloadMapping>(
     key: Key
 ): Promise<EventPayloadMapping[Key]> {
     return electron.ipcRenderer.invoke(key);
 }
+
+
 
 function ipcOn<Key extends keyof EventPayloadMapping>(
     key: Key,
@@ -25,7 +35,7 @@ function ipcOn<Key extends keyof EventPayloadMapping>(
 
 function ipcSend<Key extends keyof EventPayloadMapping>(
     key: Key,
-    payload: EventPayloadMapping[Key]
+    payload?: EventPayloadMapping[Key]
 ) {
     electron.ipcRenderer.send(key, payload);
 }

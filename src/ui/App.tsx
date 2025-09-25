@@ -1,40 +1,30 @@
-import { useState, useMemo } from 'react'
-import reactLogo from './assets/react.svg'
+import { useState } from 'react'
 import './App.css';
-import { useStatistics } from "./useStatistics";
-import { Chart } from "./Chart";
+import FileUploader from "./components/FileUploader";
+import Controls from "./components/Controls";
+import ProgressBar from './components/ProgressBar';
+import { useProgress } from "./hooks/useProgress";
 
 function App() {
-  const [count, setCount] = useState(0)
-  const statistics = useStatistics(10);
-  const cpuUsages = useMemo(
-    () => statistics.map(stat => stat.cpuUsage),
-    [statistics]
-  );
+  const [videoPath, setVideoPath] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const progress = useProgress();
+  console.log(progress);
 
   return (
-    <>
-      <div>
-        <div style={{ height: 120 }}>
-          <Chart data={cpuUsages} maxDataPoints={10} />
-        </div>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="flex flex-col items-center justify-center w-[80%] h-full">
+      <FileUploader videoPath={videoPath} setVideoPath={setVideoPath} />
+
+      {isProcessing && <ProgressBar progress={progress} />}
+
+      {videoPath &&
+        <Controls
+          videoPath={videoPath}
+          setVideoPath={setVideoPath}
+          isProcessing={isProcessing}
+          setIsProcessing={setIsProcessing}
+        />}
+    </div>
   )
 }
 

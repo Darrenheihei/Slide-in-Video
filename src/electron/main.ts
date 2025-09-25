@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron';
-import { isDev, ipcMainHandle } from './util.js';
-import { pollResources, getStaticData } from "./resourceManager.js";
+import { isDev } from './util.js';
+import { pollProgress } from "./resourceManager.js";
 import { getPreloadPath, getUIPath } from "./pathResolver.js";
 
 app.on('ready', () => {
@@ -9,6 +9,8 @@ app.on('ready', () => {
         height: 600,
         webPreferences: {
             preload: getPreloadPath(),
+            nodeIntegration: true,
+            contextIsolation: true
         },
     });
 
@@ -18,9 +20,5 @@ app.on('ready', () => {
         mainWindow.loadFile(getUIPath());
     }
 
-    pollResources(mainWindow);
-
-    ipcMainHandle("getStaticData", () => {
-        return getStaticData();
-    })
+    pollProgress(mainWindow);
 });
