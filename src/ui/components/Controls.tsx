@@ -13,7 +13,7 @@ const Controls: React.FC<ControlsProps> = ({ videoPath, setVideoPath, isProcessi
                     className={`px-4 py-2 text-white rounded bg-teal-500 hover:bg-teal-600 cursor-pointer`}
                     onClick={() => {
                         setIsProcessing(true)
-                        window.electron.sendProcessSignal(videoPath);
+                        window.electron.startProcess(videoPath);
                     }}
                     disabled={isProcessing}>
                     Extract Slides

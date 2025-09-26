@@ -1,7 +1,8 @@
 import { app, BrowserWindow } from 'electron';
-import { isDev } from './util.js';
+import { isDev, ipcMainOn } from './util.js';
 import { pollProgress } from "./resourceManager.js";
 import { getPreloadPath, getUIPath } from "./pathResolver.js";
+// import { extractSlidesFromVideo } from './slideExtractor.js';
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({
@@ -20,5 +21,12 @@ app.on('ready', () => {
         mainWindow.loadFile(getUIPath());
     }
 
+    // send progress
     pollProgress(mainWindow);
+
+    // Handle the startProcess signal
+    ipcMainOn("startProcess", (filePath) => {
+        console.log("Received startProcess signal with filePath:", filePath);
+        // extractSlidesFromVideo(filePath);
+    });
 });

@@ -6,7 +6,7 @@ type EventPayloadMapping = {
     statistics: Statistics;
     getStaticData: StaticData;
     progress: number;
-    processSignal: string;
+    startProcess: string;
 };
 
 type UnsubscribeFunction = () => void;
@@ -16,7 +16,7 @@ interface Window {
     electron: {
         getPathForFile: (file: File) => Promise<string>;
         subscribeProgress: (callback: (progress: number) => void) => UnsubscribeFunction;
-        sendProcessSignal: (filePath: string) => void;
+        startProcess: (filePath: string) => void;
     };
 
     path: {

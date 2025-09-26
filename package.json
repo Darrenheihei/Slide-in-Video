@@ -15,7 +15,8 @@
     "transpile:electron": "tsc -project src/electron/tsconfig.json",
     "dist:mac": "npm run transpile:electron && npm run build && electron-builder --mac --arm64",
     "dist:win": "npm run transpile:electron && npm run build && electron-builder --win --x64",
-    "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64"
+    "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64",
+    "install": "cmake-js compile"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
