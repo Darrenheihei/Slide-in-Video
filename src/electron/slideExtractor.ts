@@ -1,23 +1,22 @@
-// import { FFmpeg } from "@ffmpeg/ffmpeg";
-// import { fetchFile } from "@ffmpeg/util";
+import axios from "axios";
 
+const BASE_URL = "http://localhost:5001";
 
-// let ffmpeg: FFmpeg | null = null;
-// export async function extractSlidesFromVideo(videoPath: string) {
-//     // Placeholder implementation
-//     console.log(`Extracting slides from video at path: ${videoPath}`);
+export async function extractSlides(videoPath: string) {
+    const res = await axios.post(`${BASE_URL}/extract_slides`, { video_path: videoPath });
+    console.log(res.data)
 
-//     // read the duration of the video using ffmpeg
-//     if (!ffmpeg) {
-//         ffmpeg = new FFmpeg();
-//         await ffmpeg.load();
-//     }
+    if (res.status !== 204) {
+        throw new Error(`Failed to extract slides: ${res.statusText}`);
+    }
+}
 
-//     await ffmpeg.writeFile('input.mov', await fetchFile(videoPath));
-//     const res = await ffmpeg.exec(['-i', 'input.mov']);
-//     console.log(res);
+export async function stopProcessing() {
+    const res = await axios.post(`${BASE_URL}/stop_processing`);
+    return res.data;
+}
 
-//     // terminate the ffmpeg instance to free up resources
-//     ffmpeg.terminate();
-//     ffmpeg = null;
-// }
+export async function getProgress() {
+    const res = await axios.get(`${BASE_URL}/progress`);
+    return res.data.progress;
+}

@@ -1,8 +1,11 @@
 import { app, BrowserWindow } from 'electron';
-import { isDev, ipcMainOn } from './util.js';
-import { pollProgress } from "./resourceManager.js";
+import { isDev, ipcMainOn, ipcWebContentsSend } from './util.js';
+import { startPollingProgress, stopPollingProgress } from "./resourceManager.js";
 import { getPreloadPath, getUIPath } from "./pathResolver.js";
-// import { extractSlidesFromVideo } from './slideExtractor.js';
+import { extractSlides, stopProcessing } from './slideExtractor.js';
+import { runPython, killPython } from "./pythonExecutor.js";
+
+// const isMac = process.platform === 'darwin'; // check if the platform is macOS
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({
@@ -21,12 +24,47 @@ app.on('ready', () => {
         mainWindow.loadFile(getUIPath());
     }
 
-    // send progress
-    pollProgress(mainWindow);
+    // Notify renderer that Python server is not ready initially
+    ipcWebContentsSend('pythonServerReady', mainWindow.webContents, false);
+
+    // Wait for the renderer to be ready before starting Python server
+    mainWindow.webContents.once('did-finish-load', () => {
+        // Add a small delay to ensure React app is fully initialized
+        setTimeout(() => {
+            // Start Python server and notify when ready
+            runPython(mainWindow)
+                .then(() => {
+                    console.log("Python server is ready!");
+                    ipcWebContentsSend('pythonServerReady', mainWindow.webContents, true);
+                })
+                .catch((error) => {
+                    console.error("Failed to start Python process:", error);
+                });
+        }, 100); // Small delay to ensure React app is fully ready
+    });
 
     // Handle the startProcess signal
-    ipcMainOn("startProcess", (filePath) => {
-        console.log("Received startProcess signal with filePath:", filePath);
-        // extractSlidesFromVideo(filePath);
+    ipcMainOn("startProcess", async (filePath) => {
+        try {
+            // Start polling progress when process starts
+            startPollingProgress(mainWindow);
+            await extractSlides(filePath);
+        } catch (error) {
+            console.error("Error during slide extraction:", error);
+        }
     });
+
+    ipcMainOn("stopProcess", async () => {
+        // Stop polling progress when process stops
+        stopPollingProgress();
+        await stopProcessing();
+    });
+});
+
+app.on('window-all-closed', () => {
+    killPython();
+
+    // if (!isMac) {
+    app.quit();
+    // }
 });

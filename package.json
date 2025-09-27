@@ -1,6 +1,6 @@
 {
   "name": "slide-in-video",
-  "productName": "Slide In Video",
+  "productName": "Slide-In-Video",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -20,12 +20,14 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
+    "axios": "^1.12.2",
     "lucide-react": "^0.544.0",
     "os-utils": "^0.0.14",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "recharts": "^3.2.1",
-    "tailwindcss": "^4.1.13"
+    "tailwindcss": "^4.1.13",
+    "tree-kill": "^1.2.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

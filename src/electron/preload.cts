@@ -6,9 +6,20 @@ electron.contextBridge.exposeInMainWorld('electron', {
     startProcess: (filePath) => {
         ipcSend("startProcess", filePath);
     },
+    stopProcess: () => {
+        ipcSend("stopProcess");
+    },
     subscribeProgress: (callback) =>
         ipcOn("progress", (progress) => {
             callback(progress);
+        }),
+    subscribePythonServerReady: (callback) =>
+        ipcOn("pythonServerReady", (isReady) => {
+            callback(isReady);
+        }),
+    subscribeConsoleLog: (callback) =>
+        ipcOn("consoleLog", (message) => {
+            callback(message);
         }),
 } satisfies Window['electron']);
 

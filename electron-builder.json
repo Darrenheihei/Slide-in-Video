@@ -6,7 +6,8 @@
     ],
     "extraResources": [
         "dist-electron/preload.cjs",
-        "src/assets/**"
+        "src/assets/**",
+        "dist-python/main"
     ],
     "icon": "./desktopIcon.png",
     "mac": {

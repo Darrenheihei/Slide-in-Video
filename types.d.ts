@@ -1,5 +1,6 @@
 // define global types for both frontend and backend
 
+/// <reference types="vite/client" />
 
 // key: event name, value: payload type
 type EventPayloadMapping = {
@@ -7,6 +8,10 @@ type EventPayloadMapping = {
     getStaticData: StaticData;
     progress: number;
     startProcess: string;
+    stopProcess: void;
+    pythonServerReady: boolean;
+
+    consoleLog: string;
 };
 
 type UnsubscribeFunction = () => void;
@@ -16,7 +21,11 @@ interface Window {
     electron: {
         getPathForFile: (file: File) => Promise<string>;
         subscribeProgress: (callback: (progress: number) => void) => UnsubscribeFunction;
+        subscribePythonServerReady: (callback: (isReady: boolean) => void) => UnsubscribeFunction;
         startProcess: (filePath: string) => void;
+        stopProcess: () => void;
+
+        subscribeConsoleLog: (callback: (message: string) => void) => UnsubscribeFunction;
     };
 
     path: {

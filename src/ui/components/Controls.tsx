@@ -23,6 +23,7 @@ const Controls: React.FC<ControlsProps> = ({ videoPath, setVideoPath, isProcessi
                 onClick={() => {
                     setVideoPath("")
                     setIsProcessing(false)
+                    window.electron.stopProcess();
                 }}>
                 Cancel
             </button>

@@ -41,8 +41,6 @@ export function validateEventFrame(frame: WebFrameMain | null) {
         throw new Error('Malicious event');
     }
 
-    console.log(frame.url);
-
     // if in dev mode, allow localhost:5123 (Vite dev server)
     if (isDev() && new URL(frame.url).host === 'localhost:5123') {
         return;
